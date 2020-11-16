@@ -24,21 +24,27 @@ Print the maximum possible sum of the values of items that Taro takes home.
 # O(n*m) -> O(10^7)
 
 def calculeKnepsack(wt, vt, n, w):
-    dp = [[0 for x in range(w + 1)] for x in range(n + 1)] 
-    for item in range(1,n+1):
+    dp = [[[0, []] for x in range(w + 1)] for x in range(n + 1)] 
+    for i in range(1,n+1):
         for capacity in range(1,w+1):
-            maxValue = dp[item - 1][capacity]
+            maxValue = dp[i - 1][capacity][0]
             maxValueCurr = 0
-            wItem = wt[item - 1]
+            wItem = wt[i]
+            vItem = vt[i]
+            itens = [(i, vItem)]
             
             if capacity >= wItem:
-                maxValueCurr = vt[item - 1]
                 remainingCapacity = capacity - wItem
-                maxValueCurr += dp[item - 1][remainingCapacity]
-            
-            dp[item][capacity] = max(maxValue, maxValueCurr)
+                maxValueCurr = dp[i - 1][remainingCapacity][0] + vItem
+                itens += dp[i - 1][remainingCapacity][1]
+                
+            if maxValue != max(maxValue, maxValueCurr):
+                dp[i][capacity] = [maxValueCurr, itens]
+            else:
+                dp[i][capacity] = dp[i - 1][capacity]
     
-    return dp[n][w]
+    return dp[n][w] 
+
 """
 def calculeKnepsack(n, w):
     dp = [0] * (w + 1)
@@ -53,5 +59,14 @@ def calculeKnepsack(n, w):
 
 def run():
     n, w = list(map(int, input().split()))
-    print(calculeKnepsack(n, w))
+    """
+    wt = [0]
+    vt = [0]
+    for i in range(1, n + 1):
+        wi, vi = list(map(int, input().split()))
+        wt.append(wi)
+        vt.append(vi)
+    print(calculeKnepsack(wt, vt, n, w))
+    """
+    print(calculeKnepsack(n,w))
 run()
